@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Talks Today</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .search-container {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        #search {
+            width: 80%;
+            max-width: 400px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        main {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .talk, .break {
+            background-color: #fff;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .talk-time, .break-time {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .talk-title {
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .talk-speakers {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .talk-category {
+            display: inline-block;
+            background-color: #eee;
+            color: #333;
+            padding: 0.3rem 0.6rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
+        .talk-description {
+            margin-top: 1rem;
+        }
+
+        .break {
+            text-align: center;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tech Talks Today</h1>
+        <p>A One-Day Virtual Event</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Search by category...">
+    </div>
+
+    <main id="schedule-container"></main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scheduleContainer = document.getElementById('schedule-container');
+            const searchInput = document.getElementById('search');
+            const talks = [
+              {
+                "title": "The Future of Artificial Intelligence",
+                "speakers": ["Dr. Evelyn Reed"],
+                "category": ["AI", "Machine Learning", "Future Tech"],
+                "duration": 60,
+                "description": "A deep dive into the advancements and future prospects of Artificial Intelligence and its impact on society."
+              },
+              {
+                "title": "Web Development in 2026: A Look Ahead",
+                "speakers": ["John Doe", "Jane Smith"],
+                "category": ["Web Development", "JavaScript", "Frontend"],
+                "duration": 60,
+                "description": "Exploring the latest trends, frameworks, and technologies that will shape the future of web development."
+              },
+              {
+                "title": "Cybersecurity in a Connected World",
+                "speakers": ["Alex Chen"],
+                "category": ["Cybersecurity", "Networking", "Privacy"],
+                "duration": 60,
+                "description": "An essential guide to understanding and mitigating the security risks in our increasingly connected digital lives."
+              },
+              {
+                "title": "The Power of Big Data Analytics",
+                "speakers": ["Maria Garcia"],
+                "category": ["Big Data", "Data Science", "Analytics"],
+                "duration": 60,
+                "description": "Learn how to harness the power of big data to drive business decisions and gain a competitive edge."
+              },
+              {
+                "title": "Building Scalable Cloud-Native Applications",
+                "speakers": ["David Lee", "Emily White"],
+                "category": ["Cloud Computing", "DevOps", "Microservices"],
+                "duration": 60,
+                "description": "A comprehensive overview of the principles and best practices for building and deploying scalable applications in the cloud."
+              },
+              {
+                "title": "Ethical Considerations in Tech",
+                "speakers": ["Dr. Olivia Green"],
+                "category": ["Ethics", "Technology", "Society"],
+                "duration": 60,
+                "description": "A thought-provoking discussion on the ethical dilemmas and responsibilities facing the tech industry today."
+              }
+            ];
+
+            renderSchedule(talks);
+
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase();
+                const filteredTalks = talks.filter(talk => 
+                    talk.category.some(category => category.toLowerCase().includes(query))
+                );
+                renderSchedule(filteredTalks);
+            });
+
+            function renderSchedule(talksToRender) {
+                scheduleContainer.innerHTML = '';
+                let currentTime = new Date('2026-01-01T10:00:00');
+
+                let talkCount = 0;
+                let lunchRendered = false;
+
+                const sortedTalksToRender = talksToRender.sort((a, b) => talks.indexOf(a) - talks.indexOf(b));
+
+                talks.forEach((talk, index) => {
+
+                    if (!sortedTalksToRender.includes(talk)) {
+                        return;
+                    }
+
+                    talkCount++;
+
+                    if (talkCount === 4 && !lunchRendered) {
+                        const lunchBreak = document.createElement('div');
+                        lunchBreak.className = 'break';
+                        const lunchStartTime = new Date(currentTime);
+                        const lunchEndTime = addMinutes(lunchStartTime, 60);
+                        lunchBreak.innerHTML = `
+                            <div class="break-time">${formatTime(lunchStartTime)} - ${formatTime(lunchEndTime)}</div>
+                            <div>Lunch Break</div>
+                        `;
+                        scheduleContainer.appendChild(lunchBreak);
+                        currentTime = addMinutes(lunchEndTime, 10);
+                        lunchRendered = true;
+                    }
+                    
+                    const talkElement = document.createElement('div');
+                    talkElement.className = 'talk';
+
+                    const talkTime = formatTime(currentTime);
+                    const endTime = addMinutes(currentTime, talk.duration);
+                    const talkEndTime = formatTime(endTime);
+
+                    talkElement.innerHTML = `
+                        <div class="talk-time">${talkTime} - ${talkEndTime}</div>
+                        <h2 class="talk-title">${talk.title}</h2>
+                        <div class="talk-speakers">By: ${talk.speakers.join(', ')}</div>
+                        <div class="talk-categories">
+                            ${talk.category.map(cat => `<span class="talk-category">${cat}</span>`).join('')}
+                        </div>
+                        <p class="talk-description">${talk.description}</p>
+                    `;
+                    scheduleContainer.appendChild(talkElement);
+
+                    currentTime = addMinutes(endTime, 10); // 10 minute transition
+                });
+            }
+
+            function formatTime(date) {
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            function addMinutes(date, minutes) {
+                return new Date(date.getTime() + minutes * 60000);
+            }
+        });
+    </script>
+</body>
+</html>
